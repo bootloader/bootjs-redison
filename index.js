@@ -1,8 +1,8 @@
-const client = require('./redison');
+const redison = require('./redison');
 const cachebox = require('./cachebox');
 const config = require('@bootloader/config');
 
 module.exports = {
-    client, redis : client,
-    cachebox
+    client : redison, redis : redison,
+    cachebox : cachebox
 }
