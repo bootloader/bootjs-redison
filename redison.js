@@ -1,5 +1,5 @@
 
-const config = require('config');
+const config = require('@bootloader/config');
 
 const client = (function(host){
     if(host == '<host>'){

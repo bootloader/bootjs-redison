@@ -1,6 +1,6 @@
 {
   "name": "@bootloader/redison",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Multi-Tenant Support of redis",
   "main": "index.js",
   "scripts": {
@@ -8,17 +8,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bootloader/bootjs-mongon.git"
+    "url": "git+https://github.com/bootloader/bootjs-redison.git"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@bootloader/config": "^1.4.0",
+    "@bootloader/config": "^1.4.1",
     "redis": "^4.1.0",
     "redis-mock": "^0.56.3"
   },
   "bugs": {
-    "url": "https://github.com/bootloader/bootjs-mongon/issues"
+    "url": "https://github.com/bootloader/bootjs-redison/issues"
   },
-  "homepage": "https://github.com/bootloader/bootjs-mongon#readme"
+  "homepage": "https://github.com/bootloader/bootjs-redison#readme"
 }

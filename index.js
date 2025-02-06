@@ -3,5 +3,6 @@ const cachebox = require('./cachebox');
 const config = require('@bootloader/config');
 
 module.exports = {
-    client, cachebox
+    client, redis : client,
+    cachebox
 }
