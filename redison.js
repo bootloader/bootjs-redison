@@ -2,7 +2,6 @@ const config = require("@bootloader/config");
 const IORedis = require("ioredis");
 const MockIORedis = require("./MockIORedis");
 
-const { RedisMemoryServer } = require("redis-memory-server");
 const redisHost =
   config.getIfPresent("redis.host") || config.getIfPresent("mry.redis.host");
 const redisClient =
@@ -12,10 +11,37 @@ const redisClient =
 
 const isRedisMock = redisHost == "<host>" || !redisHost;
 
+async function startRedisServer() {
+  try {
+    const { RedisServer } = require("@redis/server");
+    let server = new RedisServer();
+    await server.open();
+    console.error("✅ package(@redis/server) found!");
+    return { host: server.host, port: server.port };
+  } catch (err1) {
+    console.info("❌ package(@redis/server) not found!");
+    try {
+      const { RedisMemoryServer } = require("redis-memory-server");
+      let redisServer = await RedisMemoryServer.create(); // Create in-memory Redis
+      console.error("✅ package(redis-memory-server) found!");
+      return {
+        host: await redisServer.getHost(),
+        port: await redisServer.getPort(),
+      };
+    } catch (err2) {
+      console.error("❌ No in-memory Redis package found!");
+      console.error(
+        "💡 Install either `@redis/server` or `redis-memory-server` globally:"
+      );
+      console.error("npm install -g @redis/server");
+      console.error("OR (only for Non-Windows)");
+      console.error("npm install -g redis-memory-server");
+    }
+  }
+}
+
 async function connectMock(IORedisClient) {
-  let redisServer = await RedisMemoryServer.create(); // Create in-memory Redis
-  const host = await redisServer.getHost(); // Get host (127.0.0.1)
-  const port = await redisServer.getPort(); // Get dynamic port
+  const { host, port } = await startRedisServer(); // Create in-memory Redis
   console.log(`Connecting to in-memory Redis`);
   await IORedisClient.connect({ host, port });
 }
@@ -30,12 +56,13 @@ const client = (function (host) {
       return IORedisClient;
     } else {
       console.log(`## ioredis:connection:${host}`);
-      return new IORedis(
-        `redis://${host}:${
+      return new IORedis({
+        host,
+        port:
           config.getIfPresent("redis.port") ||
-          config.getIfPresent("mry.redis.port")
-        }`
-      );
+          config.getIfPresent("mry.redis.port"),
+        maxRetriesPerRequest: null,
+      });
     }
   } else {
     if (isRedisMock) {
