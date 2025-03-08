@@ -13,13 +13,13 @@ const isRedisMock = redisHost == "<host>" || !redisHost;
 
 async function startRedisServer() {
   try {
-    const { RedisServer } = require("@redis/server");
-    let server = new RedisServer();
+    const RedisServer = require("redis-server");
+    let server = new RedisServer(6379);
     await server.open();
-    console.error("✅ package(@redis/server) found!");
+    console.error("✅ package(redis-server) found!");
     return { host: server.host, port: server.port };
   } catch (err1) {
-    console.info("❌ package(@redis/server) not found!");
+    console.info("❌ package(redis-server) not found!");
     try {
       const { RedisMemoryServer } = require("redis-memory-server");
       let redisServer = await RedisMemoryServer.create(); // Create in-memory Redis
@@ -31,9 +31,9 @@ async function startRedisServer() {
     } catch (err2) {
       console.error("❌ No in-memory Redis package found!");
       console.error(
-        "💡 Install either `@redis/server` or `redis-memory-server` globally:"
+        "💡 Install either `redis-server` or `redis-memory-server` globally:"
       );
-      console.error("npm install -g @redis/server");
+      console.error("npm install -g redis-server");
       console.error("OR (only for Non-Windows)");
       console.error("npm install -g redis-memory-server");
     }
