@@ -2,15 +2,7 @@ const config = require("@bootloader/config");
 const IORedis = require("ioredis");
 const MockIORedis = require("./MockIORedis");
 const { requireGlobal, system } = require("@bootloader/utils");
-
-const redisHost =
-  config.getIfPresent("redis.host") || config.getIfPresent("mry.redis.host");
-const redisClient =
-  config.getIfPresent("redis.client") ||
-  config.getIfPresent("mry.redis.client") ||
-  "redis";
-
-const isRedisMock = redisHost == "<host>" || !redisHost;
+const info = require("./info");
 
 async function startRedisServer() {
   try {
@@ -67,9 +59,8 @@ async function connectMock(IORedisClient) {
 }
 
 const client = (function (host) {
-  let ioredis = "ioredis";
-  if (redisClient == ioredis) {
-    if (isRedisMock) {
+  if (info.isIORedis) {
+    if (info.isMock) {
       console.log(`## ioredis-mock:connection:${host}`);
       let IORedisClient = new MockIORedis();
       connectMock(IORedisClient);
@@ -85,7 +76,7 @@ const client = (function (host) {
       });
     }
   } else {
-    if (isRedisMock) {
+    if (info.isMock) {
       console.log(`## redis-mock:connection:${host}`);
       const redisMock = require("redis-mock");
       return redisMock.createClient();
@@ -100,13 +91,13 @@ const client = (function (host) {
       });
     }
   }
-})(redisHost);
+})(info.host);
 
 client.on("error", (err) => console.error("Redis Client Error", err));
 client.on("connect", () => console.log("Redis Client connected"));
 if (typeof client.connect == "function") {
   //console.log("=====connecting");
-  if (redisClient == "redis") {
+  if (info.name == "redis") {
     client.connect();
   }
 }
