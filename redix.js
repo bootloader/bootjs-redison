@@ -58,4 +58,3 @@ const redix = new RediX();
 
 // ✅ Works with both require() and import:
 module.exports = redix; // CommonJS
-export default redix; // ESM
