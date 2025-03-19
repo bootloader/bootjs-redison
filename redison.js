@@ -58,7 +58,7 @@ async function connectMock(IORedisClient) {
   await IORedisClient.connect({ host, port });
 }
 
-const client = (function (host) {
+const client = (function (host, port) {
   if (info.isIORedis) {
     if (info.isMock) {
       console.log(`## ioredis-mock:connection:${host}`);
@@ -69,9 +69,7 @@ const client = (function (host) {
       console.log(`## ioredis:connection:${host}`);
       return new IORedis({
         host,
-        port:
-          config.getIfPresent("redis.port") ||
-          config.getIfPresent("mry.redis.port"),
+        port,
         maxRetriesPerRequest: null,
       });
     }
@@ -84,14 +82,11 @@ const client = (function (host) {
       console.log(`## redis-mock:connection:${host}`);
       let redis = require("redis");
       return redis.createClient({
-        url: `redis://${host}:${
-          config.getIfPresent("redis.port") ||
-          config.getIfPresent("mry.redis.port")
-        }`,
+        url: `redis://${host}:${port}`,
       });
     }
   }
-})(info.host);
+})(info.host,info.port);
 
 client.on("error", (err) => console.error("Redis Client Error", err));
 client.on("connect", () => console.log("Redis Client connected"));

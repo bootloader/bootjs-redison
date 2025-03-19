@@ -2,6 +2,8 @@ const config = require("@bootloader/config");
 
 const redisHost =
   config.getIfPresent("redis.host") || config.getIfPresent("mry.redis.host");
+const redisPort =
+  config.getIfPresent("redis.port") || config.getIfPresent("mry.redis.port");
 const redisClient =
   config.getIfPresent("redis.client") ||
   config.getIfPresent("mry.redis.client") ||
@@ -9,7 +11,7 @@ const redisClient =
 
 
 module.exports = {
-    host : redisHost,
+    host : redisHost,port : redisPort,
     name : redisClient,
     isMock : redisHost == "<host>" || !redisHost,
     isIORedis : redisClient == "ioredis"
