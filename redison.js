@@ -54,8 +54,10 @@ async function startRedisLocalServer() {
 
 async function connectMock(IORedisClient) {
   console.log(`⚠️ Connecting to in-memory Mock Redis`);
-  const { host, port } = await startRedisLocalServer(); // Create in-memory Redis
-  await IORedisClient.connect({ host, port });
+  const options =  = await startRedisLocalServer(); // Create in-memory Redis
+  if(options){
+      await IORedisClient.connect(options);
+  }
 }
 
 const client = (function (host, port) {
