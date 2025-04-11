@@ -1,4 +1,5 @@
 const redison = require('./redison');
+const redix = require('./redix');
 const cachebox = require('./cachebox');
 const rqueue = require('./rqueue');
 const info = require('./info');
@@ -13,10 +14,11 @@ module.exports = {
   RQueue: rqueue,
   rQueue: rqueue,
   info,
+  redix,
   waitForReady: async function () {
     if (typeof redison?.waitForReady == 'function') {
       return await redison.waitForReady();
     }
-    return await redison.waitForReady();
+    return redison;
   },
 };

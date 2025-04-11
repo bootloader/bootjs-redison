@@ -4,6 +4,8 @@ const MockIORedis = require('./MockIORedis');
 const { requireGlobal, system } = require('@bootloader/utils');
 const info = require('./info');
 
+var console = require("@bootloader/log4js").getLogger('redison');
+
 async function startRedisServer() {
   try {
     const RedisServer = requireGlobal('redis-server');
@@ -54,7 +56,8 @@ async function connectMock(IORedisClient) {
   console.log(`⚠️ Connecting to in-memory Mock Redis`);
   const options = await startRedisLocalServer(); // Create in-memory Redis
   if (options) {
-    await IORedisClient.connect(options);
+    IORedisClient.setConfig(options);
+    await IORedisClient.connect();
   }
 }
 
@@ -102,18 +105,39 @@ config.set('redis.port', '<port>');
 })(info);
 
 if (client) {
-  client.waitForReady = function () {
-    return new Promise((resolve, reject) => {
-      client.on('error', err => {
-        console.error('Redis Client Error', err);
-        reject(err);
-      });
-      client.on('connect', () => {
-        console.log('Redis Client connected');
-        resolve(client);
-      });
+  function listenrs(resolve, reject) {
+    client.on('error', err => {
+      if (typeof reject == 'function') reject(err);
     });
-  };
+    client.on('connect', () => {
+      if (typeof resolve == 'function') resolve(client);
+    });
+  }
+
+  if (!client.waitForReady) {
+    console.log('⚠️  Custom:waitForReady');
+    let $ready = null;
+    client.waitForReady = function () {
+      if (!$ready) {
+        $ready = new Promise((resolve, reject) => {
+          listenrs(
+            c => {
+              console.log('✅ Redis Client connected');
+              resolve(c);
+            },
+            e => {
+              cconsole.error('❌ Redis Client Error', err);
+              reject(e);
+            }
+          );
+        });
+      }
+      return $ready;
+    };
+  } else {
+    listenrs();
+  }
+
   if (typeof client.connect == 'function') {
     //console.log("=====connecting");
     if (info.name == 'redis') {
