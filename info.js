@@ -1,5 +1,4 @@
 const config = require('@bootloader/config');
-const { reject } = require('../boot-node/@core/lib/ChainedPromise');
 
 const redisHost = config.getIfPresent('redis.host') || config.getIfPresent('mry.redis.host');
 const redisPort = config.getIfPresent('redis.port') || config.getIfPresent('mry.redis.port');
