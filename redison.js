@@ -99,6 +99,9 @@ redis.port=<port>
 ## or manually via config in code before importing redison
 config.set('redis.host', '<host>');
 config.set('redis.port', '<port>');
+
+## TO use in-memory/mock redis
+redis.host=<mock>
 *********************************************************
     `);
   throw new Error('❌ Redis config MISSING');
@@ -126,7 +129,7 @@ if (client) {
               resolve(c);
             },
             e => {
-              cconsole.error('❌ Redis Client Error', err);
+              console.error('❌ Redis Client Error', e);
               reject(e);
             }
           );
