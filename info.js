@@ -9,5 +9,6 @@ module.exports = {
   port: redisPort,
   name: redisClient,
   isMock: ['<host>', '<localhost>', '<mock>'].indexOf(redisHost) >= 0, // || !redisHost,
+  isNone: ['<none>', '<disabled>', '<na>', '<disconnected>'].indexOf(redisHost) >= 0, // || !redisHost,
   isIORedis: redisClient == 'ioredis',
 };

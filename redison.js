@@ -62,6 +62,10 @@ async function connectMock(IORedisClient) {
 }
 
 const client = (function ({ host, port, name, isMock, isIORedis }) {
+  if(info.isNone) {
+    console.log(`## redis:connection:${info.host}`);
+    return null;
+  }
   if (info.isIORedis) {
     if (info.isMock) {
       console.log(`## ioredis-mock:connection:${info.host}`);
@@ -102,6 +106,9 @@ config.set('redis.port', '<port>');
 
 ## TO use in-memory/mock redis
 redis.host=<mock>
+
+## TO disable redis (in case you are not using it)
+redis.host=<none>
 *********************************************************
     `);
   throw new Error('❌ Redis config MISSING');

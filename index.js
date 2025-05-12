@@ -16,6 +16,9 @@ module.exports = {
   info,
   redix,
   waitForReady: async function () {
+    if(info.isNone){
+      return null;
+    }
     if (typeof redison?.waitForReady == 'function') {
       return await redison.waitForReady();
     }
